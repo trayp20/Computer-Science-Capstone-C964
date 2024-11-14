@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Stock Analysis Interface</h1>
+    <div class="input-section">
+        <input type="text" id="ticker-input" placeholder="Enter stock ticker (e.g., AAPL)" />
+        <button onclick="analyzeStock()">Analyze</button>
+    </div>
+
+    <div id="results" style="display: none; margin-top: 20px;">
+        <h3>Results:</h3>
+    <button onclick="fetchHistory()">Show Analysis History</button>
+    <div id="history"></div>
+        <!-- Display the plots -->
+        <div class="plot-section">
+            <h4>Closing Price Trend</h4>
+            <img id="closing-price-plot" src="" alt="Closing Price Trend" style="display: none;">
+
+            <h4>Moving Average Comparison</h4>
+            <img id="moving-average-plot" src="" alt="Moving Average Comparison" style="display: none;">
+
+            <h4>Daily Percentage Change Distribution</h4>
+            <img id="percentage-change-plot" src="" alt="Percentage Change Distribution" style="display: none;">
+        </div>
+
+        <!-- Display prediction and LLM insight -->
+        <p><strong>Predicted Price:</strong> <span id="predicted-price"></span></p>
+        <p><strong>LLM Insight:</strong> <span id="llm-insight"></span></p>
+    </div>
+
+    <script>
+        async function analyzeStock() {
+            const ticker = document.getElementById("ticker-input").value.trim();
+            if (!ticker) {
+                alert("Please enter a valid stock ticker.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ ticker: ticker })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(errorData.error || "An error occurred.");
+                    return;
+                }
+
+                const result = await response.json();
+                document.getElementById("results").style.display = "block";
+
+                // Display the plots
+                document.getElementById("closing-price-plot").src = result.closing_price_plot;
+                document.getElementById("closing-price-plot").style.display = "block";
+
+                document.getElementById("moving-average-plot").src = result.moving_average_plot;
+                document.getElementById("moving-average-plot").style.display = "block";
+
+                document.getElementById("percentage-change-plot").src = result.percentage_change_plot;
+                document.getElementById("percentage-change-plot").style.display = "block";
+
+                // Display prediction and LLM insight
+                document.getElementById("predicted-price").innerText = `$${result.prediction.toFixed(2)}`;
+                document.getElementById("llm-insight").innerText = result.insight;
+            } catch (error) {
+                alert("An error occurred: " + error.message);
+            }
+        }
+    </script>
+    <script>
+        async function fetchHistory() {
+            try {
+                const response = await fetch("/history");
+                const history = await response.json();
+        
+                const historyDiv = document.getElementById("history");
+                historyDiv.innerHTML = "<h3>Analysis History</h3>";
+        
+                // Loop through each record and format it into a readable structure
+                history.forEach(record => {
+                    historyDiv.innerHTML += `
+                        <p><strong>${record.ticker}</strong> | Prediction: $${record.prediction.toFixed(2)} | 
+                        Insight: ${record.insight} | Date: ${record.date_analyzed}</p>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error fetching history:", error);
+            }
+        }
+    </script>
+</body>
+</html>
