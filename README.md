@@ -3,7 +3,7 @@
 **An interactive data product that combines financial analytics, interactive visualization, and a fine-tuned large language model to deliver on-demand stock analysis and price predictions for any publicly traded ticker.**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flack-3.0-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
+[![Flask](https://img.shields.io/badge/Flask-3.0-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.5-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org)
 [![HuggingFace Transformers](https://img.shields.io/badge/Transformers-4.46-FFD21E?logo=huggingface&logoColor=black)](https://huggingface.co)
 [![PEFT](https://img.shields.io/badge/PEFT-0.13-0A7CFF)](https://huggingface.co/docs/peft)
